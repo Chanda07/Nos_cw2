@@ -1,0 +1,260 @@
+#!/bin/bash
+
+#specifying secretkey for the program
+secretkey="123"
+n=3
+
+#function for the scretkey validation
+secretcode() {
+	while [ $n -ge 1 ]
+	do
+		echo "Enter the secret key: "
+		read -s key
+		#checking if entered key is same as specified secretkey 
+		if [ $key == $secretkey ]
+		then
+			break
+		else
+			#displays message is entered secretkey is not correct
+			echo "Not Matched! " 
+		fi
+		(( n-- ))
+		echo $n attempts left	
+	done 
+
+	if [ $n -lt 1 ]
+	then
+		#displays message if wrong secretkey is entered 3 times
+		echo "Your Guess Exceeded!"
+	exit
+	fi
+}
+secretcode
+
+#function to display list of music bands
+mband() {
+	 echo ""
+	 echo " LIST OF MUSIC BANDS AND THEIR CODES "
+	 echo "    ............................"
+	 echo "      | Music band  ||  Code |"
+	 echo "    ............................"
+	 echo "      | Beatles     ||  BEA  |"
+	 echo "      | AC/DC       ||  AD   |"
+	 echo "      | Queen       ||  QUE  |"
+	 echo "      | Blondie     ||  BLO  |"
+	 echo "      | Nirvana     ||  NIR  |"
+}
+
+#function to validate music band
+checkband(){
+	while [ true ]
+	do
+		echo -e "Please guess the best band by using the band codes!!"
+		read ccode
+		if [ -z $ccode ]
+		 then 
+			echo "Please guess a band name and check if its the best band"
+		else
+			if [[ $ccode = "BEA" || $ccode = "AD" || $ccode = "QUE" ||
+				 $ccode = "BLO" || $ccode = "NIR" ]]
+			 then
+				#checking if correct music band code is entered and display message
+			 	if [ $ccode = "QUE" ]
+			 	 then
+					echo "Correct guess!!!"
+					echo""
+			 	 	echo "Queen is the BEST MUSIC BAND. Queen music band are a British rock band formed in London in 1970."
+					echo "Some of the popular songs produced by this band are Somebody TO Love, Killer Queen, Don't Stop Me Now."
+					echo ""
+			 	 break
+			else
+					echo "Your guess is wrong! Please guess another band code."
+					echo ""
+					mband
+
+			 	fi
+			else
+
+				echo "Invalid Code !!! Please choose one among the table above!"
+				echo""
+				continue
+			fi
+		fi
+	done
+}
+
+#function to display list  band members
+displayband() {
+	 echo " "
+	 echo "    LIST OF THE FIVE-STAR BAND MEMBERS "
+	 echo "    .................................."
+	 echo "      | Members          ||   Code |  "
+	 echo "    .................................."
+	 echo "      | John Lennon      ||     JL | "
+	 echo "      | Angus Young      ||     AY | "
+	 echo "      | Freddie Mercury  ||     FM | "
+	 echo "      | Debbie Harry     ||     DH | "
+	 echo "      | Kurt Cobain      ||     KC | "
+}
+
+#function to ask and display information about band members
+checkmember(){
+	check=false
+while [ $check = "false" ]
+do
+	echo""
+	echo -e "Choose any 3 band members from the list: " #ask to choose 3 memebers form list
+	
+	read m1 m2 m3
+	mem=($m1 $m2 $m3)
+	if [[ ${#mem[@]} -eq 3 ]];
+	then
+		if [[ $m1 == $m2 || $m1 == $m3 || $m2 == $m3 ]]; 
+		then 
+		echo -e "Choose three different band members !! "
+		displayband
+		else
+		for cm in "${mem[@]}";
+		do
+			if [[ $cm = "JL" || $cm = "AY" || $cm = "FM" || $cm = "DH" || $cm = "KC" ]]
+			then
+				choosemem=true
+			else
+				choosemem=false
+				break
+			fi
+		done
+			
+		if [ $choosemem = "false" ]
+		then
+			echo ""
+			echo "Invalid Code!! Please enter valid members code from the list."
+		else
+			check=true
+		fi
+	fi
+	else
+		echo ""
+		echo "Please enter three members code only!!"
+	fi
+done
+}
+
+
+#function to choose one members among three listed and display information
+choosemember(){
+	checkmember	
+	
+	PS3="Choose any one band member code number: "
+	select bandmem in "${mem[@]}"
+	do
+     		if [ -z $bandmem ]
+     		then
+			
+     			echo "Please select a band member code number from the list "
+     		else
+     			case $bandmem in  #to check if external file exists or not
+				JL) if [ -f $bandmem ]
+				then 
+					echo " JL --> John Lenon."
+					echo""
+                        		cat $bandmem
+                        		break
+                		else
+                			echo "File was not found!!"
+                		fi
+                		;; 
+                		
+                		AY) if [ -f $bandmem ]
+                		then 
+					echo "AY --> Angus Young."
+					echo""
+					cat $bandmem
+					break
+               	 	else
+                        		echo "File was not found!!"
+       		 	fi
+       		 	;; 
+       		 	
+				"FM") if [ -f $bandmem ]
+                		then 
+					echo "FM --> Freddie Mercury."
+					echo""
+					cat $bandmem
+					break
+                		else
+					echo "File not found!!"
+                		fi
+                		;;
+	
+				DH) if [ -f $bandmem ]
+                		then 
+					cat $bandmem
+                        		break
+                		else
+					echo "File not found!!"
+                		fi
+                		;;
+                		
+				KC) if [ -f $bandmem ]
+                		then 
+					cat $bandmem
+					break
+                		else
+					echo "File not found!!"
+                		fi
+        		esac
+      		fi
+
+	done
+}
+	
+	
+#giving restrictions for name and ID
+if [[ $1 =~ [Aa-Zz]+$ && $2 =~ ^[0-9]+$ ]]
+then
+        echo "........................ WELCOME ..........................."
+	echo " "
+	echo " ID: $2                                          "
+        echo " Name: $1                               			  "
+        echo " Date and Time: $(date)                 			  "
+        echo "............................................................"        
+        repeat=true
+			while [ $repeat = "true" ]
+			do
+                       #calling function to repeat processes
+			mband
+			checkband
+			displayband		
+        		choosemember
+			echo
+			
+			a=1
+        		until [[ $a = "y" || $a = "Y" || $a = "n" || $a = "N" ]]
+        		do
+        			echo""
+				echo -e "Do you want to Exit?"
+				echo""
+				echo -e "Press "Y" to exit and "N" to start again: "
+				read program
+			
+			case $program in
+				n|N) 
+				mband
+				checkband
+				displayband
+				choosemember ;;
+				y|Y)
+				echo""
+				 echo "Thank you for using the program! See you Again!"
+					exit ;;
+				*) echo "Press Y or N only."
+				;;
+			esac	
+			done
+		done
+
+else
+        echo "Invalid Name or ID! Name must be string and ID must be integer"
+        exit
+fi
